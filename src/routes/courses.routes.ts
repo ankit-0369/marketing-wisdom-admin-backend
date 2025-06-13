@@ -11,6 +11,7 @@ import {
   deleteCourseController,
   getAllCourseController,
   getCourseByIdController,
+  getCourseBySlugController,
   updateCourseController,
 } from "../controllers/courses.controller";
 
@@ -37,5 +38,5 @@ router
     deleteCourseController
   );
 router.route("/:courseId").get(getCourseByIdController);
-
+router.route("/slug/:slug").get(getCourseBySlugController);
 export default router;

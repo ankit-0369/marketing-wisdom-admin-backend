@@ -4,12 +4,15 @@ import { Response } from "express-serve-static-core";
 import { PrismaClient } from "@prisma/client";
 import { ApiResponse } from "../utils/apiResponse";
 import { ApiError } from "../utils/apiError";
+import { slugify } from "../utils/slugify";
 
 const prisma = new PrismaClient();
 
 const addBookController = asyncHandler(async (req: Request, res: Response) => {
   const { title, subtitle, description, imageUrl, amazonIndUrl, amazonUsdUrl } =
     req.body;
+
+    const slug= slugify(title);
 
   await prisma.book.create({
     data: {
@@ -19,6 +22,7 @@ const addBookController = asyncHandler(async (req: Request, res: Response) => {
       imageUrl,
       amazonIndUrl,
       amazonUsdUrl,
+      slug
     },
   });
 
@@ -118,10 +122,32 @@ const getBookByIdController = asyncHandler(
   }
 );
 
+const getBookBySlugController = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { slug } = req.params;
+    if (!slug) {
+        throw new ApiError(400, "slug required for fetching book details");
+    }
+
+    const existingBook = await prisma.book.findUnique({
+      where: {slug },
+    });
+
+    if (!existingBook) {
+      return res.status(404).json(new ApiResponse(404, "book not found"));
+    }
+
+    return res
+      .status(200)
+      .json(new ApiResponse(200, existingBook, "book found successfully"));
+  }
+);
+
 export {
   addBookController,
   getAllBooksController,
   updateBookController,
   deleteBookController,
   getBookByIdController,
+  getBookBySlugController
 };

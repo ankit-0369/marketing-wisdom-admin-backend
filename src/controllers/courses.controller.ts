@@ -4,20 +4,22 @@ import { Response } from "express-serve-static-core";
 import { PrismaClient } from "@prisma/client";
 import { ApiResponse } from "../utils/apiResponse";
 import { ApiError } from "../utils/apiError";
+import { slugify } from "../utils/slugify";
 
 const prisma = new PrismaClient();
 
 const addCourseController = asyncHandler(async (req: Request, res: Response) => {
   const { title, subtitle, description, imageUrl, ctaUrl } =
     req.body;
-
+  const slug= slugify(title);
   await prisma.course.create({
     data: {
       title,
       subtitle,
       description,
       imageUrl,
-      ctaUrl
+      ctaUrl,
+      slug
     },
   });
 
@@ -98,11 +100,32 @@ const getCourseByIdController = asyncHandler(
   async (req: Request, res: Response) => {
     const {  courseId } = req.params;
     if (!courseId) {
-      throw new ApiError(400, "courseId required for fetching book details");
+      throw new ApiError(400, "courseId required for fetching course details");
     }
 
     const existingCourse = await prisma.course.findUnique({
       where: { id: courseId },
+    });
+
+    if (!existingCourse) {
+      return res.status(404).json(new ApiResponse(404, "course not found"));
+    }
+
+    return res
+      .status(200)
+      .json(new ApiResponse(200, existingCourse, "course found successfully"));
+  }
+);
+
+const getCourseBySlugController = asyncHandler(
+  async (req: Request, res: Response) => {
+    const {  slug } = req.params;
+    if (!slug) {
+      throw new ApiError(400, "slug required for fetching course details");
+    }
+
+    const existingCourse = await prisma.course.findUnique({
+      where: { slug },
     });
 
     if (!existingCourse) {
@@ -121,4 +144,5 @@ export {
   updateCourseController,
   deleteCourseController,
   getCourseByIdController,
+  getCourseBySlugController
 };

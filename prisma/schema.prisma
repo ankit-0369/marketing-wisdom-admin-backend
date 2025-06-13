@@ -22,25 +22,26 @@ model Admin {
 }
 
 model Book {
-  id             String   @id @default(uuid())
-  title          String
-  subtitle       String?      // Optional
-  description    String
-  imageUrl       String       // Image dropdown value or URL
-  amazonIndUrl   String       // Required
-  amazonUsdUrl   String       // Required
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  id           String   @id @default(uuid())
+  title        String
+  subtitle     String? // Optional
+  description  String
+  imageUrl     String // Image dropdown value or URL
+  amazonIndUrl String // Required
+  amazonUsdUrl String // Required
+  slug         String   @unique 
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 }
 
 model Course {
-  id             String   @id @default(uuid())
-  title          String
-  subtitle       String?      // Optional
-  description    String
-  imageUrl       String       // Larger image expected
-  ctaUrl         String       // Required CTA
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  id          String   @id @default(uuid())
+  title       String
+  subtitle    String? // Optional
+  description String
+  imageUrl    String // Larger image expected
+  ctaUrl      String // Required CTA
+  slug        String   @unique
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
-

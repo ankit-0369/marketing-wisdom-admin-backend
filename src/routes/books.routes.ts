@@ -5,6 +5,7 @@ import {
   deleteBookController,
   getAllBooksController,
   getBookByIdController,
+  getBookBySlugController,
   updateBookController,
 } from "../controllers/books.controller";
 import { validateRequest } from "../middleware/validate.middleware";
@@ -27,6 +28,7 @@ router
 
 router.route("/delete/:bookId").delete(verifyJWT, deleteBookController);
 router.route("/:bookId").get(getBookByIdController);
+router.route("/slug/:slug").get(getBookBySlugController);
 // router.route('/search').get() //unplanned
 
 export default router;
